@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Swisscom · Lead Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --blue:#0067CC;--blue2:#004FA3;--violet:#6B21A8;--cyan:#38BDF8;
+  --glass:rgba(255,255,255,0.09);--border:rgba(255,255,255,0.19);
+  --text:#E0E7FF;--muted:rgba(255,255,255,0.52);
+  --danger:#F87171;--success:#34D399;--warn:#FBBF24;
+  --radius:16px;--shadow:0 8px 40px rgba(0,0,0,0.35);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;min-height:100vh;
+  background:linear-gradient(135deg,#0a1628 0%,#0d2352 30%,#1a0a4d 65%,#2d0a5c 100%);
+  color:var(--text);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 60% at 15% 20%,rgba(0,103,204,.25) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 50% at 85% 75%,rgba(107,33,168,.30) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 40% at 60% 10%,rgba(56,189,248,.12) 0%,transparent 70%);}
+
+/* ── LANG BAR ── */
+.lang-bar{position:relative;z-index:10;display:flex;align-items:center;
+  justify-content:flex-end;gap:6px;padding:12px 26px 0;}
+.lang-btn{background:var(--glass);border:1px solid var(--border);border-radius:8px;
+  color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;
+  font-size:.72rem;font-weight:600;padding:5px 12px;transition:all .18s;backdrop-filter:blur(10px);}
+.lang-btn:hover{color:#fff;border-color:rgba(255,255,255,.4);}
+.lang-btn.active{background:linear-gradient(135deg,var(--blue),var(--violet));
+  border-color:transparent;color:#fff;box-shadow:0 2px 14px rgba(0,103,204,.45);}
+
+/* ── WRAPPER ── */
+.wrapper{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:22px 20px 64px;}
+
+/* ── HEADER ── */
+header{display:flex;align-items:center;justify-content:space-between;gap:20px;
+  margin-bottom:28px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:16px;}
+.swisscom-logo{background:transparent;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.swisscom-logo svg{width:100%;height:100%;}
+.header-title h1{font-family:'Syne',sans-serif;font-size:1.75rem;font-weight:800;
+  letter-spacing:-.5px;line-height:1.1;
+  background:linear-gradient(90deg,#fff 0%,var(--cyan) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.header-title p{font-size:.78rem;color:var(--muted);margin-top:3px;}
+.header-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+.header-badge{background:var(--glass);border:1px solid var(--border);border-radius:999px;
+  padding:5px 14px;font-size:.72rem;color:var(--cyan);backdrop-filter:blur(10px);white-space:nowrap;}
+.date-display{font-size:.75rem;color:var(--muted);background:var(--glass);
+  border:1px solid var(--border);border-radius:8px;padding:5px 12px;}
+
+/* ── DASHBOARD ── */
+.dashboard{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:22px;}
+.stat-card{background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px 14px;backdrop-filter:blur(16px);text-align:center;
+  transition:transform .2s,border-color .2s;cursor:default;}
+.stat-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.38);}
+.stat-card .stat-icon{font-size:1.3rem;margin-bottom:5px;}
+.stat-card .stat-num{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;line-height:1;color:#fff;}
+.stat-card .stat-label{font-size:.64rem;color:var(--muted);margin-top:4px;}
+.stat-card.blue  .stat-num{color:var(--cyan);}
+.stat-card.green .stat-num{color:var(--success);}
+.stat-card.warm  .stat-num{color:var(--warn);}
+.stat-card.red   .stat-num{color:#FCA5A5;}
+.stat-card.purple.stat-num{color:#C4B5FD;}
+
+/* ── CARD ── */
+.card{background:var(--glass);border:1px solid var(--border);border-radius:24px;
+  padding:30px 30px 26px;backdrop-filter:blur(24px);box-shadow:var(--shadow);
+  animation:slideUp .5s cubic-bezier(.22,1,.36,1) both;}
+@keyframes slideUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.card-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;
+  margin-bottom:20px;display:flex;align-items:center;gap:10px;color:#fff;}
+.card-title .pill{background:linear-gradient(135deg,var(--blue),var(--violet));
+  border-radius:6px;padding:3px 10px;font-size:.65rem;font-weight:600;letter-spacing:.5px;color:#fff;}
+
+/* ── FORM ── */
+.form-section{margin-bottom:22px;}
+.section-label{font-size:.7rem;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--cyan);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.section-label::after{content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,rgba(56,189,248,.4),transparent);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.form-grid.three{grid-template-columns:1fr 1fr 1fr;}
+.form-grid.four{grid-template-columns:1fr 1fr 1fr 1fr;}
+.form-grid.full{grid-template-columns:1fr;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:.76rem;font-weight:500;color:var(--muted);}
+.req{color:var(--danger);}
+.opt-tag{font-size:.61rem;background:rgba(255,255,255,.1);border-radius:4px;
+  padding:1px 6px;color:var(--muted);margin-left:4px;}
+.field input,.field select,.field textarea{
+  background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);
+  border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.91rem;
+  padding:11px 14px;outline:none;
+  transition:border-color .2s,background .2s,box-shadow .2s;
+  width:100%;appearance:none;-webkit-appearance:none;}
+.field textarea{resize:vertical;min-height:76px;line-height:1.5;}
+.field select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2338BDF8' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer;}
+.field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,.28);}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--cyan);background:rgba(56,189,248,.07);
+  box-shadow:0 0 0 3px rgba(56,189,248,.14);}
+.field select option{background:#0f172a;color:#fff;}
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.13),transparent);margin:18px 0;}
+
+/* ── PRIORITY DOTS ── */
+.priority-row{display:flex;gap:10px;align-items:center;}
+.prio-btn{flex:1;border:1.5px solid rgba(255,255,255,.15);border-radius:10px;
+  background:rgba(255,255,255,.05);color:var(--muted);font-family:'DM Sans',sans-serif;
+  font-size:.8rem;font-weight:600;padding:10px 6px;cursor:pointer;text-align:center;
+  transition:all .18s;}
+.prio-btn:hover{border-color:rgba(255,255,255,.3);color:#fff;}
+.prio-btn.active-low {background:rgba(147,197,253,.15);border-color:#93C5FD;color:#93C5FD;}
+.prio-btn.active-med {background:rgba(253,230,138,.15);border-color:#FDE68A;color:#FDE68A;}
+.prio-btn.active-high{background:rgba(252,165,165,.15);border-color:#FCA5A5;color:#FCA5A5;}
+
+/* ── BUTTONS ── */
+.btn-row{display:flex;gap:13px;margin-top:22px;flex-wrap:wrap;}
+.btn{flex:1;min-width:130px;border:none;border-radius:12px;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;padding:13px 20px;
+  transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden;letter-spacing:.2px;}
+.btn::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,0);transition:background .15s;}
+.btn:hover::after{background:rgba(255,255,255,.08);}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:linear-gradient(135deg,var(--blue) 0%,var(--violet) 100%);
+  color:#fff;box-shadow:0 4px 24px rgba(0,103,204,.45);}
+.btn-primary:hover{box-shadow:0 6px 32px rgba(107,33,168,.55);transform:translateY(-2px);}
+.btn-secondary{background:rgba(255,255,255,.07);color:var(--muted);border:1.5px solid rgba(255,255,255,.15);}
+.btn-secondary:hover{color:#fff;border-color:rgba(255,255,255,.35);}
+.btn-danger{background:rgba(248,113,113,.12);color:#FCA5A5;border:1.5px solid rgba(248,113,113,.3);}
+.btn-danger:hover{background:rgba(248,113,113,.22);border-color:#F87171;color:#fff;}
+.btn-export{background:rgba(52,211,153,.12);color:#34D399;border:1.5px solid rgba(52,211,153,.3);}
+.btn-export:hover{background:rgba(52,211,153,.22);border-color:#34D399;color:#fff;}
+.ripple-circle{position:absolute;border-radius:50%;transform:scale(0);
+  background:rgba(255,255,255,.25);animation:ripple .6s linear;pointer-events:none;}
+@keyframes ripple{to{transform:scale(4);opacity:0}}
+.btn-primary.loading{pointer-events:none;}
+.btn-primary.loading .btn-text{opacity:0;}
+.btn-primary .spinner{position:absolute;inset:0;display:flex;align-items:center;
+  justify-content:center;opacity:0;transition:opacity .2s;}
+.btn-primary.loading .spinner{opacity:1;}
+.spinner-ring{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── SEARCH & FILTER BAR ── */
+.search-bar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;}
+.search-bar input{flex:1;min-width:160px;background:rgba(255,255,255,.07);
+  border:1.5px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;
+  font-family:'DM Sans',sans-serif;font-size:.88rem;padding:10px 14px;outline:none;
+  transition:border-color .2s,box-shadow .2s;}
+.search-bar input::placeholder{color:rgba(255,255,255,.28);}
+.search-bar input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(56,189,248,.14);}
+.filter-select{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);
+  border-radius:10px;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.82rem;
+  padding:10px 32px 10px 12px;outline:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2338BDF8' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;appearance:none;}
+.filter-select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(56,189,248,.14);}
+.filter-select option{background:#0f172a;}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:26px;right:26px;z-index:9999;
+  display:flex;align-items:center;gap:12px;
+  background:rgba(13,16,35,.95);border:1px solid var(--border);border-radius:14px;
+  padding:14px 20px;backdrop-filter:blur(24px);box-shadow:0 8px 40px rgba(0,0,0,.5);
+  max-width:340px;transform:translateY(80px);opacity:0;
+  transition:transform .4s cubic-bezier(.22,1,.36,1),opacity .4s;}
+#toast.show{transform:translateY(0);opacity:1;}
+#toast.success{border-color:rgba(52,211,153,.5);}
+#toast.error  {border-color:rgba(248,113,113,.5);}
+.toast-icon{font-size:1.35rem;flex-shrink:0;}
+.toast-text strong{display:block;font-weight:600;font-size:.88rem;color:#fff;}
+.toast-text span  {font-size:.76rem;color:var(--muted);}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.65);
+  backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .25s;}
+.modal-overlay.active{opacity:1;pointer-events:all;}
+.modal{background:linear-gradient(145deg,#0f1d3d,#1a0a3e);border:1px solid var(--border);
+  border-radius:20px;padding:30px 28px;width:90%;max-width:440px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  transform:scale(.9) translateY(20px);transition:transform .3s cubic-bezier(.22,1,.36,1);}
+.modal-overlay.active .modal{transform:scale(1) translateY(0);}
+.modal h2{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:6px;}
+.modal p{font-size:.8rem;color:var(--muted);margin-bottom:18px;}
+.modal input{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);
+  border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.93rem;
+  padding:12px 14px;outline:none;width:100%;margin-bottom:16px;
+  transition:border-color .2s,box-shadow .2s;}
+.modal input::placeholder{color:rgba(255,255,255,.28);}
+.modal input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(56,189,248,.14);}
+.modal-actions{display:flex;gap:12px;}
+.modal-actions .btn{flex:1;}
+
+/* ── TABLE ── */
+.table-section{margin-top:24px;background:var(--glass);border:1px solid var(--border);
+  border-radius:20px;overflow:hidden;backdrop-filter:blur(20px);box-shadow:var(--shadow);}
+.table-header{padding:18px 22px 14px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(255,255,255,.07);flex-wrap:wrap;gap:10px;}
+.table-header h2{font-family:'Syne',sans-serif;font-size:.98rem;font-weight:700;color:#fff;}
+.table-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.badge-count{background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff;
+  border-radius:999px;padding:3px 12px;font-size:.72rem;font-weight:600;}
+.tbl-action-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);
+  border-radius:8px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;
+  font-size:.72rem;font-weight:600;padding:5px 12px;
+  transition:all .18s;white-space:nowrap;}
+.tbl-action-btn:hover{color:#fff;border-color:rgba(255,255,255,.38);}
+.tbl-action-btn.export{color:var(--success);border-color:rgba(52,211,153,.35);}
+.tbl-action-btn.export:hover{background:rgba(52,211,153,.12);}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:rgba(255,255,255,.04);}
+th{font-size:.66rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--muted);padding:9px 13px;text-align:left;white-space:nowrap;}
+td{font-size:.8rem;color:var(--text);padding:10px 13px;border-top:1px solid rgba(255,255,255,.05);
+  vertical-align:middle;}
+tbody tr{transition:background .15s;}
+tbody tr:hover{background:rgba(255,255,255,.03);}
+.degree-badge{display:inline-flex;align-items:center;gap:4px;border-radius:999px;
+  padding:2px 9px;font-size:.69rem;font-weight:600;white-space:nowrap;}
+.degree-badge.cold{background:rgba(147,197,253,.15);color:#93C5FD;}
+.degree-badge.warm{background:rgba(253,230,138,.15);color:#FDE68A;}
+.degree-badge.hot {background:rgba(252,165,165,.15);color:#FCA5A5;}
+.notes-cell{max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:var(--muted);font-style:italic;font-size:.75rem;}
+.action-btns{display:flex;gap:6px;}
+.icon-btn{background:none;border:1px solid rgba(255,255,255,.12);border-radius:7px;
+  color:var(--muted);cursor:pointer;font-size:.82rem;padding:4px 8px;
+  transition:all .15s;}
+.icon-btn:hover{border-color:rgba(255,255,255,.35);color:#fff;}
+.icon-btn.del:hover{border-color:var(--danger);color:var(--danger);}
+.empty-state{text-align:center;padding:36px 20px;color:var(--muted);font-size:.83rem;}
+.empty-state .big{font-size:2rem;margin-bottom:8px;}
+
+/* ── CONFIRM DELETE DIALOG ── */
+#confirmOverlay{position:fixed;inset:0;z-index:1100;background:rgba(0,0,0,.7);
+  backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s;}
+#confirmOverlay.active{opacity:1;pointer-events:all;}
+#confirmBox{background:linear-gradient(145deg,#1a0020,#0d1a3a);border:1px solid rgba(248,113,113,.35);
+  border-radius:18px;padding:28px 26px;width:90%;max-width:360px;text-align:center;
+  transform:scale(.88);transition:transform .25s cubic-bezier(.22,1,.36,1);}
+#confirmOverlay.active #confirmBox{transform:scale(1);}
+#confirmBox h3{font-family:'Syne',sans-serif;font-size:1.05rem;color:#fff;margin-bottom:8px;}
+#confirmBox p{font-size:.82rem;color:var(--muted);margin-bottom:20px;}
+#confirmBox .cbtn-row{display:flex;gap:10px;}
+#confirmBox .cbtn-row .btn{flex:1;padding:11px;}
+
+/* ── FOOTER ── */
+footer{text-align:center;margin-top:40px;color:rgba(255,255,255,.28);font-size:.73rem;line-height:1.8;}
+footer strong{color:rgba(255,255,255,.52);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:720px){
+  .card{padding:20px 15px;}
+  .form-grid,.form-grid.three,.form-grid.four{grid-template-columns:1fr;}
+  .dashboard{grid-template-columns:1fr 1fr;}
+  .btn-row{flex-direction:column;}
+  .header-title h1{font-size:1.3rem;}
+  #toast{left:10px;right:10px;bottom:10px;}
+  .lang-bar{padding:8px 12px 0;}
+  th:nth-child(6),td:nth-child(6),
+  th:nth-child(7),td:nth-child(7){display:none;}
+}
+@media(max-width:480px){
+  .dashboard{grid-template-columns:1fr;}
+  th:nth-child(5),td:nth-child(5){display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div id="toast">
+  <div class="toast-icon" id="toastIcon">✅</div>
+  <div class="toast-text">
+    <strong id="toastTitle"></strong>
+    <span id="toastMsg"></span>
+  </div>
+</div>
+
+<!-- MODAL: custom product -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2 id="modalTitle">✏️ Produit personnalisé</h2>
+    <p id="modalDesc">Entrez le nom du produit ou de l'offre manuellement.</p>
+    <input type="text" id="customProductInput" placeholder="Ex : Swisscom TV One…"/>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="modalCancel" onclick="cancelCustomProduct()">Annuler</button>
+      <button class="btn btn-primary" onclick="confirmCustomProduct()">
+        <span class="btn-text" id="modalConfirm">Confirmer</span>
+        <div class="spinner"><div class="spinner-ring"></div></div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DELETE -->
+<div id="confirmOverlay">
+  <div id="confirmBox">
+    <h3>🗑️ Supprimer ce lead ?</h3>
+    <p>Cette action est irréversible dans l'interface locale (le Google Sheet n'est pas affecté).</p>
+    <div class="cbtn-row">
+      <button class="btn btn-secondary" onclick="closeConfirm()">Annuler</button>
+      <button class="btn btn-danger" onclick="doDelete()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<!-- LANG BAR -->
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('fr')" id="lb-fr">🇫🇷 FR</button>
+  <button class="lang-btn" onclick="setLang('de')" id="lb-de">🇩🇪 DE</button>
+  <button class="lang-btn" onclick="setLang('en')" id="lb-en">🇬🇧 EN</button>
+  <button class="lang-btn" onclick="setLang('it')" id="lb-it">🇮🇹 IT</button>
+</div>
+
+<div class="wrapper">
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <div class="swisscom-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100" width="120" height="40">
+  <defs>
+    <style>.sc{fill:white;font-family:Arial Black,Arial;font-weight:900;}</style>
+  </defs>
+  <!-- S-mark simplified -->
+  <circle cx="42" cy="50" r="38" fill="none" stroke="white" stroke-width="0"/>
+  <!-- Swisscom official icon: two overlapping circles with diagonal cut -->
+  <g transform="translate(4,8)">
+    <path fill="white" d="M38 0 C17 0 0 17 0 38 C0 52 7 64 18 72
+      C8 80 2 91 2 104 C2 122 18 136 38 136 C58 136 74 122 74 104
+      C74 91 68 80 58 72 C69 64 76 52 76 38 C76 17 59 0 38 0Z
+      M38 14 C51 14 62 25 62 38 C62 46 58 53 52 58 L42 51
+      C48 48 52 43 52 38 C52 30 46 24 38 24 C30 24 24 30 24 38
+      C24 43 28 48 34 51 L24 58 C18 53 14 46 14 38 C14 25 25 14 38 14Z
+      M38 122 C25 122 16 114 16 104 C16 97 20 91 27 87 L36 94
+      C33 96 30 100 30 104 C30 110 33 114 38 114 C43 114 46 110 46 104
+      C46 100 43 96 40 94 L49 87 C56 91 60 97 60 104 C60 114 51 122 38 122Z"/>
+  </g>
+  <!-- wordmark -->
+  <text x="98" y="62" font-family="Arial Black, Arial" font-weight="900"
+        font-size="34" fill="white" letter-spacing="-1">swisscom</text>
+</svg></div>
+      <div class="header-title">
+        <h1>Lead Manager</h1>
+        <p id="headerSubtitle">Hotline Swisscom · Opportunités commerciales</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="date-display" id="dateDisplay"></div>
+      <div class="header-badge">🔴 Live · <span id="sessionLabel">Session active</span></div>
+    </div>
+  </header>
+
+  <!-- DASHBOARD (5 stats) -->
+  <div class="dashboard">
+    <div class="stat-card blue">
+      <div class="stat-icon">📋</div>
+      <div class="stat-num" id="countTotal">0</div>
+      <div class="stat-label" id="statLabelTotal">Leads aujourd'hui</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-icon">🔥</div>
+      <div class="stat-num" id="countHot">0</div>
+      <div class="stat-label" id="statLabelHot">Leads chauds</div>
+    </div>
+    <div class="stat-card warm">
+      <div class="stat-icon">🌡️</div>
+      <div class="stat-num" id="countWarm">0</div>
+      <div class="stat-label" id="statLabelWarm">Leads tièdes</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-icon">🌐</div>
+      <div class="stat-num" id="countInternet">0</div>
+      <div class="stat-label" id="statLabelInternet">Internet</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-icon">📱</div>
+      <div class="stat-num" id="countMobile">0</div>
+      <div class="stat-label" id="statLabelMobile">Mobile</div>
+    </div>
+  </div>
+
+  <!-- FORM CARD -->
+  <div class="card">
+    <div class="card-title">
+      ➕ <span id="formTitle">Nouveau Lead</span>
+      <span class="pill" id="formPill">FORMULAIRE</span>
+    </div>
+
+    <!-- CLIENT -->
+    <div class="form-section">
+      <div class="section-label" id="sectionClient">Informations client</div>
+      <div class="form-grid">
+        <div class="field">
+          <label><span id="labelLastName">Nom</span> <span class="req">*</span></label>
+          <input type="text" id="clientNom" placeholder="Dupont"/>
+        </div>
+        <div class="field">
+          <label><span id="labelFirstName">Prénom</span> <span class="req">*</span></label>
+          <input type="text" id="clientPrenom" placeholder="Jean"/>
+        </div>
+      </div>
+      <div class="form-grid" style="margin-top:12px;">
+        <div class="field">
+          <label><span id="labelClientNum">Numéro client</span><span class="opt-tag" id="labelOptional">Optionnel</span></label>
+          <input type="text" id="clientNum" placeholder="ex : 0041234567"/>
+        </div>
+        <div class="field">
+          <label><span id="labelPhone">Téléphone</span><span class="opt-tag" id="labelOpt2">Optionnel</span></label>
+          <input type="tel" id="clientPhone" placeholder="+41 79 000 00 00"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- AGENT -->
+    <div class="form-section">
+      <div class="section-label" id="sectionAgent">Informations agent</div>
+      <div class="form-grid">
+        <div class="field">
+          <label><span id="labelAgentId">ID Agent</span> <span class="req">*</span></label>
+          <input type="text" id="agentId" placeholder="AGT-001"/>
+        </div>
+        <div class="field">
+          <label><span id="labelAgentName">Nom de l'agent</span> <span class="req">*</span></label>
+          <input type="text" id="agentNom" placeholder="Marie Dupont"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- LEAD & PRODUIT -->
+    <div class="form-section">
+      <div class="section-label" id="sectionLead">Lead & Produit</div>
+      <div class="form-grid three">
+        <div class="field">
+          <label><span id="labelDegree">Degré du lead</span> <span class="req">*</span></label>
+          <select id="leadDegree">
+            <option value="">-- Choisir --</option>
+            <option value="Cold">❄️ Froid</option>
+            <option value="Warm">🌡️ Tiède</option>
+            <option value="Hot">🔥 Chaud</option>
+          </select>
+        </div>
+        <div class="field">
+          <label><span id="labelProdType">Type de produit</span> <span class="req">*</span></label>
+          <select id="productType" onchange="handleProductType()">
+            <option value="">-- Choisir --</option>
+            <option value="Internet">🌐 Internet</option>
+            <option value="Mobile">📱 Mobile</option>
+            <option value="Other">✏️ Autre</option>
+          </select>
+        </div>
+        <div class="field">
+          <label><span id="labelProdSpec">Produit spécifique</span> <span class="req">*</span></label>
+          <select id="productSpecific" disabled>
+            <option value="">-- Choisir d'abord --</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- NOTES -->
+    <div class="form-section">
+      <div class="section-label" id="sectionNotes">Notes & Remarques</div>
+      <div class="form-grid full">
+        <div class="field">
+          <label><span id="labelNotes">Notes internes</span><span class="opt-tag" id="labelOpt3">Optionnel</span></label>
+          <textarea id="leadNotes" placeholder="Informations complémentaires, contexte du client, prochaine étape…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnSubmit" onclick="submitLead(event)">
+        <span class="btn-text" id="btnSubmitLabel">✅ Ajouter le lead</span>
+        <div class="spinner"><div class="spinner-ring"></div></div>
+      </button>
+      <button class="btn btn-secondary" id="btnReset" onclick="resetForm()">🔄 Réinitialiser</button>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-section">
+    <div class="table-header">
+      <h2 id="tableTitle">📊 Leads enregistrés aujourd'hui</h2>
+      <div class="table-actions">
+        <span class="badge-count" id="tableBadge">0 leads</span>
+        <button class="tbl-action-btn export" onclick="exportCSV()">⬇️ Export CSV</button>
+      </div>
+    </div>
+    <!-- SEARCH + FILTER -->
+    <div style="padding:12px 18px 0;">
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="🔍 Rechercher un client, produit, agent…" oninput="renderTable()"/>
+        <select class="filter-select" id="filterDegree" onchange="renderTable()">
+          <option value="">Tous les degrés</option>
+          <option value="Hot">🔥 Chaud</option>
+          <option value="Warm">🌡️ Tiède</option>
+          <option value="Cold">❄️ Froid</option>
+        </select>
+        <select class="filter-select" id="filterType" onchange="renderTable()">
+          <option value="">Tous les types</option>
+          <option value="Internet">🌐 Internet</option>
+          <option value="Mobile">📱 Mobile</option>
+          <option value="Other">✏️ Autre</option>
+        </select>
+      </div>
+    </div>
+    <div id="tableContainer">
+      <div class="empty-state">
+        <div class="big">📭</div>
+        <span id="emptyMsg">Aucun lead enregistré. Ajoutez votre premier lead ci-dessus.</span>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <strong>Développé par Samy.A</strong><br/>
+    <span id="footerText">Outil destiné à améliorer le process de travail de l'équipe · Swisscom Hotline</span> &copy; 2026
+  </footer>
+</div><!-- /wrapper -->
+
+<script>
+/* ══════════════════════════
+   CONFIG
+══════════════════════════ */
+// ══════════════════════════════════════════════
+// POWER AUTOMATE — Paste your HTTP trigger URL below
+// See 'ℹ️ How to Use' sheet in the Excel file for setup instructions
+// ══════════════════════════════════════════════
+const POWER_AUTOMATE_URL = "https://default1edaad83b2ef483d81f12c48682f40.ec.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ce3a63d3f4d8445394cd0f5f2836fd3e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=y6KTAU2O0lRd6esUrWsrfu8tBPUTNEmMMZwZ-Hj-bnM";
+
+/* ══════════════════════════
+   PRODUCTS (English values → stored as-is in Excel)
+══════════════════════════ */
+const PRODUCTS = {
+  Internet: ["Internet S","Internet M","Internet L"],
+  Mobile:   ["blue Mobile S","blue Mobile M","blue Mobile L"]
+};
+
+/* ══════════════════════════
+   TRANSLATIONS
+══════════════════════════ */
+const T = {
+  fr:{
+    subtitle:"Hotline Swisscom · Opportunités commerciales",session:"Session active",
+    statTotal:"Leads aujourd'hui",statHot:"Leads chauds",statWarm:"Leads tièdes",
+    statInternet:"Internet",statMobile:"Mobile",
+    formTitle:"Nouveau Lead",formPill:"FORMULAIRE",
+    sectionClient:"Informations client",
+    labelLN:"Nom",labelFN:"Prénom",labelCNum:"Numéro client",labelOpt:"Optionnel",
+    labelPhone:"Téléphone",labelOpt2:"Optionnel",
+    sectionAgent:"Informations agent",labelAId:"ID Agent",labelAName:"Nom de l'agent",
+    sectionLead:"Lead & Produit",labelDeg:"Degré du lead",
+    degDefault:"-- Choisir --",degCold:"❄️ Froid",degWarm:"🌡️ Tiède",degHot:"🔥 Chaud",
+    labelPType:"Type de produit",typeDefault:"-- Choisir --",
+    otherLabel:"✏️ Autre",
+    labelPSpec:"Produit spécifique",specDefault:"-- Choisir d'abord --",
+    sectionNotes:"Notes & Remarques",labelNotes:"Notes internes",labelOpt3:"Optionnel",
+    btnAdd:"✅ Ajouter le lead",btnReset:"🔄 Réinitialiser",
+    tableTitle:"📊 Leads enregistrés aujourd'hui",
+    emptyMsg:"Aucun lead enregistré. Ajoutez votre premier lead ci-dessus.",
+    thDate:"Date",thClient:"Client",thPhone:"Tél.",thType:"Type",thProduct:"Produit",
+    thDeg:"Degré",thAgent:"Agent",thNotes:"Notes",thActions:"",
+    modalTitle:"✏️ Produit personnalisé",
+    modalDesc:"Entrez le nom du produit ou de l'offre manuellement.",
+    modalCancel:"Annuler",modalConfirm:"Confirmer",
+    toastOkTitle:"Lead enregistré ! 🎉",toastConnErr:"Erreur de connexion",
+    toastConnMsg:"Impossible d'envoyer vers Google Sheets.",
+    toastReset:"Formulaire réinitialisé",toastResetMsg:"Tous les champs ont été vidés.",
+    toastErrTitle:"Champ manquant",validMsg:"est requis.",
+    toastDeleted:"Lead supprimé",toastDeletedMsg:"Retiré de l'interface locale.",
+    toastExport:"Export CSV généré",toastExportMsg:"Fichier téléchargé.",
+    footer:"Outil destiné à améliorer le process de travail de l'équipe · Swisscom Hotline",
+    phLN:"Dupont",phFN:"Jean",phCNum:"ex : 0041234567",phPhone:"+41 79 000 00 00",
+    phAId:"AGT-001",phAName:"Marie Dupont",
+    phNotes:"Informations complémentaires, contexte du client…",
+    phCustom:"Ex : Swisscom TV One…",searchPh:"🔍 Rechercher un client, produit, agent…",
+    filterAllDeg:"Tous les degrés",filterAllType:"Tous les types",
+    confirmTitle:"🗑️ Supprimer ce lead ?",
+    confirmMsg:"Cette action est irréversible dans l'interface locale.",
+    confirmCancel:"Annuler",confirmDel:"Supprimer",noResults:"Aucun résultat trouvé."
+  },
+  en:{
+    subtitle:"Swisscom Hotline · Sales opportunities",session:"Active session",
+    statTotal:"Leads today",statHot:"Hot leads",statWarm:"Warm leads",
+    statInternet:"Internet",statMobile:"Mobile",
+    formTitle:"New Lead",formPill:"FORM",
+    sectionClient:"Client Information",
+    labelLN:"Last name",labelFN:"First name",labelCNum:"Customer number",labelOpt:"Optional",
+    labelPhone:"Phone",labelOpt2:"Optional",
+    sectionAgent:"Agent Information",labelAId:"Agent ID",labelAName:"Agent name",
+    sectionLead:"Lead & Product",labelDeg:"Lead degree",
+    degDefault:"-- Select --",degCold:"❄️ Cold",degWarm:"🌡️ Warm",degHot:"🔥 Hot",
+    labelPType:"Product type",typeDefault:"-- Select --",
+    otherLabel:"✏️ Other",
+    labelPSpec:"Specific product",specDefault:"-- Select type first --",
+    sectionNotes:"Notes & Remarks",labelNotes:"Internal notes",labelOpt3:"Optional",
+    btnAdd:"✅ Add lead",btnReset:"🔄 Reset",
+    tableTitle:"📊 Today's leads",
+    emptyMsg:"No leads recorded yet. Add your first lead above.",
+    thDate:"Date",thClient:"Client",thPhone:"Phone",thType:"Type",thProduct:"Product",
+    thDeg:"Degree",thAgent:"Agent",thNotes:"Notes",thActions:"",
+    modalTitle:"✏️ Custom product",
+    modalDesc:"Enter the product or offer name manually.",
+    modalCancel:"Cancel",modalConfirm:"Confirm",
+    toastOkTitle:"Lead recorded! 🎉",toastConnErr:"Connection error",
+    toastConnMsg:"Could not reach Google Sheets.",
+    toastReset:"Form cleared",toastResetMsg:"All fields have been reset.",
+    toastErrTitle:"Missing field",validMsg:"is required.",
+    toastDeleted:"Lead removed",toastDeletedMsg:"Removed from local interface.",
+    toastExport:"CSV export ready",toastExportMsg:"File downloaded.",
+    footer:"Tool designed to improve the team's workflow · Swisscom Hotline",
+    phLN:"Smith",phFN:"John",phCNum:"e.g. 0041234567",phPhone:"+41 79 000 00 00",
+    phAId:"AGT-001",phAName:"Marie Dupont",
+    phNotes:"Additional info, client context, next steps…",
+    phCustom:"e.g. Swisscom TV One…",searchPh:"🔍 Search client, product, agent…",
+    filterAllDeg:"All degrees",filterAllType:"All types",
+    confirmTitle:"🗑️ Delete this lead?",
+    confirmMsg:"This action is irreversible in the local interface.",
+    confirmCancel:"Cancel",confirmDel:"Delete",noResults:"No results found."
+  },
+  de:{
+    subtitle:"Swisscom Hotline · Verkaufschancen",session:"Aktive Sitzung",
+    statTotal:"Leads heute",statHot:"Heiße Leads",statWarm:"Warme Leads",
+    statInternet:"Internet",statMobile:"Mobile",
+    formTitle:"Neuer Lead",formPill:"FORMULAR",
+    sectionClient:"Kundeninformationen",
+    labelLN:"Nachname",labelFN:"Vorname",labelCNum:"Kundennummer",labelOpt:"Optional",
+    labelPhone:"Telefon",labelOpt2:"Optional",
+    sectionAgent:"Agentinformationen",labelAId:"Agenten-ID",labelAName:"Agentenname",
+    sectionLead:"Lead & Produkt",labelDeg:"Lead-Grad",
+    degDefault:"-- Wählen --",degCold:"❄️ Kalt",degWarm:"🌡️ Warm",degHot:"🔥 Heiß",
+    labelPType:"Produkttyp",typeDefault:"-- Wählen --",
+    otherLabel:"✏️ Sonstiges",
+    labelPSpec:"Spezifisches Produkt",specDefault:"-- Zuerst Typ wählen --",
+    sectionNotes:"Notizen",labelNotes:"Interne Notizen",labelOpt3:"Optional",
+    btnAdd:"✅ Lead hinzufügen",btnReset:"🔄 Zurücksetzen",
+    tableTitle:"📊 Heutige Leads",
+    emptyMsg:"Noch keine Leads. Fügen Sie Ihren ersten Lead hinzu.",
+    thDate:"Datum",thClient:"Kunde",thPhone:"Tel.",thType:"Typ",thProduct:"Produkt",
+    thDeg:"Grad",thAgent:"Agent",thNotes:"Notizen",thActions:"",
+    modalTitle:"✏️ Benutzerdefiniertes Produkt",
+    modalDesc:"Geben Sie den Produkt- oder Angebotsnamen manuell ein.",
+    modalCancel:"Abbrechen",modalConfirm:"Bestätigen",
+    toastOkTitle:"Lead gespeichert! 🎉",toastConnErr:"Verbindungsfehler",
+    toastConnMsg:"Google Sheets nicht erreichbar.",
+    toastReset:"Formular geleert",toastResetMsg:"Alle Felder wurden zurückgesetzt.",
+    toastErrTitle:"Pflichtfeld fehlt",validMsg:"ist erforderlich.",
+    toastDeleted:"Lead gelöscht",toastDeletedMsg:"Aus lokaler Oberfläche entfernt.",
+    toastExport:"CSV-Export bereit",toastExportMsg:"Datei heruntergeladen.",
+    footer:"Tool zur Verbesserung des Team-Workflows · Swisscom Hotline",
+    phLN:"Müller",phFN:"Hans",phCNum:"z.B. 0041234567",phPhone:"+41 79 000 00 00",
+    phAId:"AGT-001",phAName:"Marie Dupont",
+    phNotes:"Zusätzliche Infos, Kundenkontext…",
+    phCustom:"z.B. Swisscom TV One…",searchPh:"🔍 Kunde, Produkt, Agent suchen…",
+    filterAllDeg:"Alle Grade",filterAllType:"Alle Typen",
+    confirmTitle:"🗑️ Lead löschen?",
+    confirmMsg:"Diese Aktion ist in der lokalen Oberfläche nicht umkehrbar.",
+    confirmCancel:"Abbrechen",confirmDel:"Löschen",noResults:"Keine Ergebnisse gefunden."
+  },
+  it:{
+    subtitle:"Hotline Swisscom · Opportunità di vendita",session:"Sessione attiva",
+    statTotal:"Lead oggi",statHot:"Lead caldi",statWarm:"Lead tiepidi",
+    statInternet:"Internet",statMobile:"Mobile",
+    formTitle:"Nuovo Lead",formPill:"MODULO",
+    sectionClient:"Informazioni cliente",
+    labelLN:"Cognome",labelFN:"Nome",labelCNum:"Numero cliente",labelOpt:"Opzionale",
+    labelPhone:"Telefono",labelOpt2:"Opzionale",
+    sectionAgent:"Informazioni agente",labelAId:"ID Agente",labelAName:"Nome agente",
+    sectionLead:"Lead & Prodotto",labelDeg:"Grado del lead",
+    degDefault:"-- Scegliere --",degCold:"❄️ Freddo",degWarm:"🌡️ Tiepido",degHot:"🔥 Caldo",
+    labelPType:"Tipo di prodotto",typeDefault:"-- Scegliere --",
+    otherLabel:"✏️ Altro",
+    labelPSpec:"Prodotto specifico",specDefault:"-- Prima scegliere il tipo --",
+    sectionNotes:"Note & Osservazioni",labelNotes:"Note interne",labelOpt3:"Opzionale",
+    btnAdd:"✅ Aggiungi lead",btnReset:"🔄 Reimposta",
+    tableTitle:"📊 Lead di oggi",
+    emptyMsg:"Nessun lead registrato. Aggiungete il primo lead.",
+    thDate:"Data",thClient:"Cliente",thPhone:"Tel.",thType:"Tipo",thProduct:"Prodotto",
+    thDeg:"Grado",thAgent:"Agente",thNotes:"Note",thActions:"",
+    modalTitle:"✏️ Prodotto personalizzato",
+    modalDesc:"Inserire manualmente il nome del prodotto o dell'offerta.",
+    modalCancel:"Annulla",modalConfirm:"Conferma",
+    toastOkTitle:"Lead registrato! 🎉",toastConnErr:"Errore di connessione",
+    toastConnMsg:"Impossibile connettersi a Google Sheets.",
+    toastReset:"Modulo resettato",toastResetMsg:"Tutti i campi sono stati cancellati.",
+    toastErrTitle:"Campo mancante",validMsg:"è obbligatorio.",
+    toastDeleted:"Lead eliminato",toastDeletedMsg:"Rimosso dall'interfaccia locale.",
+    toastExport:"Export CSV pronto",toastExportMsg:"File scaricato.",
+    footer:"Strumento per migliorare il flusso di lavoro del team · Swisscom Hotline",
+    phLN:"Rossi",phFN:"Marco",phCNum:"es. 0041234567",phPhone:"+41 79 000 00 00",
+    phAId:"AGT-001",phAName:"Marie Dupont",
+    phNotes:"Informazioni aggiuntive, contesto cliente…",
+    phCustom:"es. Swisscom TV One…",searchPh:"🔍 Cerca cliente, prodotto, agente…",
+    filterAllDeg:"Tutti i gradi",filterAllType:"Tutti i tipi",
+    confirmTitle:"🗑️ Eliminare questo lead?",
+    confirmMsg:"Questa azione è irreversibile nell'interfaccia locale.",
+    confirmCancel:"Annulla",confirmDel:"Elimina",noResults:"Nessun risultato trovato."
+  }
+};
+
+/* ══════════════════════════
+   STATE
+══════════════════════════ */
+let leads = [];
+let currentLang = 'fr';
+let customProductValue = "";
+let deleteTargetIndex = null;
+
+/* ══════════════════════════
+   DATE
+══════════════════════════ */
+function updateDate(){
+  const now = new Date();
+  document.getElementById('dateDisplay').textContent =
+    now.toLocaleDateString('fr-CH',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
+}
+updateDate();
+setInterval(updateDate, 60000);
+
+/* ══════════════════════════
+   LANG
+══════════════════════════ */
+function setLang(l){
+  currentLang = l;
+  ['fr','de','en','it'].forEach(x=>{
+    document.getElementById('lb-'+x).classList.toggle('active', x===l);
+  });
+  const t = T[l];
+  const set = (id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
+  const setPlaceholder = (id,v)=>{ const el=document.getElementById(id); if(el) el.placeholder=v; };
+  const setAttr = (sel,attr,v)=>{ const el=document.querySelector(sel); if(el) el[attr]=v; };
+
+  set('headerSubtitle',t.subtitle); set('sessionLabel',t.session);
+  set('statLabelTotal',t.statTotal); set('statLabelHot',t.statHot);
+  set('statLabelWarm',t.statWarm); set('statLabelInternet',t.statInternet);
+  set('statLabelMobile',t.statMobile);
+  set('formTitle',t.formTitle); set('formPill',t.formPill);
+  set('sectionClient',t.sectionClient);
+  set('labelLastName',t.labelLN); set('labelFirstName',t.labelFN);
+  set('labelClientNum',t.labelCNum); set('labelOptional',t.labelOpt);
+  set('labelPhone',t.labelPhone); set('labelOpt2',t.labelOpt2);
+  set('sectionAgent',t.sectionAgent);
+  set('labelAgentId',t.labelAId); set('labelAgentName',t.labelAName);
+  set('sectionLead',t.sectionLead); set('labelDegree',t.labelDeg);
+  set('labelProdType',t.labelPType); set('labelProdSpec',t.labelProdSpec);
+  set('sectionNotes',t.sectionNotes); set('labelNotes',t.labelNotes);
+  set('labelOpt3',t.labelOpt3);
+  set('btnSubmitLabel',t.btnAdd); set('btnReset',t.btnReset);
+  set('tableTitle',t.tableTitle);
+  set('modalTitle',t.modalTitle); set('modalDesc',t.modalDesc);
+  set('modalCancel',t.modalCancel); set('modalConfirm',t.modalConfirm);
+  set('footerText',t.footer);
+
+  // degree select
+  const deg = document.getElementById('leadDegree');
+  const dv = deg.value;
+  deg.innerHTML = `<option value="">${t.degDefault}</option>
+    <option value="Cold">${t.degCold}</option>
+    <option value="Warm">${t.degWarm}</option>
+    <option value="Hot">${t.degHot}</option>`;
+  deg.value = dv;
+
+  // product type select
+  const pt = document.getElementById('productType');
+  const ptv = pt.value;
+  pt.innerHTML = `<option value="">${t.typeDefault}</option>
+    <option value="Internet">🌐 Internet</option>
+    <option value="Mobile">📱 Mobile</option>
+    <option value="${l==='fr'?'Other':'Other'}">${t.otherLabel}</option>`;
+  pt.value = ptv;
+
+  // specific product placeholder if disabled
+  if(document.getElementById('productSpecific').disabled){
+    document.getElementById('productSpecific').innerHTML=`<option value="">${t.specDefault}</option>`;
+  }
+
+  // placeholders
+  setPlaceholder('clientNom',t.phLN);
+  setPlaceholder('clientPrenom',t.phFN);
+  setPlaceholder('clientNum',t.phCNum);
+  setPlaceholder('clientPhone',t.phPhone);
+  setPlaceholder('agentId',t.phAId);
+  setPlaceholder('agentNom',t.phAName);
+  setPlaceholder('leadNotes',t.phNotes);
+  setPlaceholder('customProductInput',t.phCustom);
+  setPlaceholder('searchInput',t.searchPh);
+
+  // filter selects
+  const fd = document.getElementById('filterDegree');
+  const fdv = fd.value;
+  fd.innerHTML = `<option value="">${t.filterAllDeg}</option>
+    <option value="Hot">🔥 ${l==='fr'?'Chaud':l==='de'?'Heiß':l==='it'?'Caldo':'Hot'}</option>
+    <option value="Warm">🌡️ ${l==='fr'?'Tiède':l==='de'?'Warm':l==='it'?'Tiepido':'Warm'}</option>
+    <option value="Cold">❄️ ${l==='fr'?'Froid':l==='de'?'Kalt':l==='it'?'Freddo':'Cold'}</option>`;
+  fd.value = fdv;
+
+  const ft = document.getElementById('filterType');
+  const ftv = ft.value;
+  ft.innerHTML = `<option value="">${t.filterAllType}</option>
+    <option value="Internet">🌐 Internet</option>
+    <option value="Mobile">📱 Mobile</option>
+    <option value="Other">✏️ ${t.otherLabel.replace('✏️ ','')}</option>`;
+  ft.value = ftv;
+
+  // confirm dialog (safe update)
+  const ch3 = document.querySelector('#confirmBox h3');
+  const cp  = document.querySelector('#confirmBox p');
+  const cbtns = document.querySelectorAll('#confirmBox .cbtn-row .btn');
+  if(ch3) ch3.textContent = t.confirmTitle;
+  if(cp)  cp.textContent  = t.confirmMsg;
+  if(cbtns[0]) cbtns[0].textContent = t.confirmCancel;
+  if(cbtns[1]) cbtns[1].textContent = t.confirmDel;
+
+  renderTable();
+}
+
+/* ══════════════════════════
+   PRODUCT TYPE HANDLER
+══════════════════════════ */
+function handleProductType(){
+  const type = document.getElementById('productType').value;
+  const specific = document.getElementById('productSpecific');
+  const t = T[currentLang];
+  if(type==='Other'){
+    specific.innerHTML=`<option value="">${t.specDefault}</option>`;
+    specific.disabled=true;
+    openModal(); return;
+  }
+  customProductValue="";
+  if(!type||!PRODUCTS[type]){
+    specific.innerHTML=`<option value="">${t.specDefault}</option>`;
+    specific.disabled=true; return;
+  }
+  specific.innerHTML=`<option value="">-- Select --</option>`;
+  PRODUCTS[type].forEach(p=>{
+    const o=document.createElement('option');
+    o.value=p; o.textContent=p; specific.appendChild(o);
+  });
+  specific.disabled=false;
+}
+
+/* ══════════════════════════
+   MODAL
+══════════════════════════ */
+function openModal(){
+  document.getElementById('modalOverlay').classList.add('active');
+  setTimeout(()=>document.getElementById('customProductInput').focus(),280);
+}
+function cancelCustomProduct(){
+  document.getElementById('modalOverlay').classList.remove('active');
+  document.getElementById('customProductInput').value='';
+  document.getElementById('productType').value='';
+  const t=T[currentLang];
+  document.getElementById('productSpecific').innerHTML=`<option value="">${t.specDefault}</option>`;
+  document.getElementById('productSpecific').disabled=true;
+  customProductValue="";
+}
+function confirmCustomProduct(){
+  const val=document.getElementById('customProductInput').value.trim();
+  if(!val){
+    const inp=document.getElementById('customProductInput');
+    inp.style.borderColor='var(--danger)';
+    setTimeout(()=>inp.style.borderColor='',1000); return;
+  }
+  customProductValue=val;
+  const sp=document.getElementById('productSpecific');
+  sp.innerHTML=`<option value="${val}">${val}</option>`;
+  sp.disabled=false;
+  document.getElementById('modalOverlay').classList.remove('active');
+  document.getElementById('customProductInput').value='';
+}
+document.getElementById('modalOverlay').addEventListener('click',function(e){
+  if(e.target===this) cancelCustomProduct();
+});
+document.getElementById('customProductInput').addEventListener('keydown',function(e){
+  if(e.key==='Enter') confirmCustomProduct();
+});
+
+/* ══════════════════════════
+   RIPPLE
+══════════════════════════ */
+function createRipple(e,btn){
+  const r=btn.getBoundingClientRect();
+  const s=Math.max(r.width,r.height)*2;
+  const x=e.clientX-r.left-s/2, y=e.clientY-r.top-s/2;
+  const rp=document.createElement('span');
+  rp.classList.add('ripple-circle');
+  rp.style.cssText=`width:${s}px;height:${s}px;left:${x}px;top:${y}px`;
+  btn.appendChild(rp);
+  setTimeout(()=>rp.remove(),700);
+}
+
+/* ══════════════════════════
+   TOAST
+══════════════════════════ */
+function showToast(title,msg,type='success'){
+  const toast=document.getElementById('toast');
+  document.getElementById('toastTitle').textContent=title;
+  document.getElementById('toastMsg').textContent=msg;
+  document.getElementById('toastIcon').textContent=type==='success'?'✅':'❌';
+  toast.className='show '+type;
+  setTimeout(()=>toast.className='',3800);
+}
+
+/* ══════════════════════════
+   VALIDATION
+══════════════════════════ */
+function validate(){
+  const t=T[currentLang];
+  const fields=[
+    {id:'clientNom',  label:t.labelLN},
+    {id:'clientPrenom',label:t.labelFN},
+    {id:'agentId',    label:t.labelAId},
+    {id:'agentNom',   label:t.labelAName},
+    {id:'leadDegree', label:t.labelDeg},
+    {id:'productType',label:t.labelPType},
+    {id:'productSpecific',label:t.labelProdSpec}
+  ];
+  for(const f of fields){
+    const el=document.getElementById(f.id);
+    if(!el.value.trim()){
+      el.style.borderColor='var(--danger)';
+      el.style.boxShadow='0 0 0 3px rgba(248,113,113,.2)';
+      setTimeout(()=>{el.style.borderColor='';el.style.boxShadow='';},1800);
+      showToast(t.toastErrTitle,`"${f.label}" ${t.validMsg}`,'error');
+      el.focus(); return false;
+    }
+  }
+  return true;
+}
+
+/* ══════════════════════════
+   SUBMIT — data always in English for Excel
+══════════════════════════ */
+async function submitLead(e){
+  const btn=document.getElementById('btnSubmit');
+  createRipple(e,btn);
+  if(!validate()) return;
+  const t=T[currentLang];
+  const now=new Date();
+  const dateStr=now.toLocaleDateString('en-GB')+' '+
+    now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+
+  const lead={
+    date:        dateStr,
+    clientNom:   document.getElementById('clientNom').value.trim(),
+    clientPrenom:document.getElementById('clientPrenom').value.trim(),
+    clientNum:   document.getElementById('clientNum').value.trim()||'—',
+    clientPhone: document.getElementById('clientPhone').value.trim()||'—',
+    typeProduit: document.getElementById('productType').value,   // always English
+    produit:     document.getElementById('productSpecific').value,
+    degre:       document.getElementById('leadDegree').value,    // Cold/Warm/Hot
+    agentId:     document.getElementById('agentId').value.trim(),
+    agentNom:    document.getElementById('agentNom').value.trim(),
+    notes:       document.getElementById('leadNotes').value.trim()||'—'
+  };
+
+  btn.classList.add('loading');
+  let ok=false;
+  try{
+    await fetch(POWER_AUTOMATE_URL,{
+      method:'POST',mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(lead)
+    });
+    ok=true;
+  }catch(err){console.warn('Sheets error:',err);}
+  btn.classList.remove('loading');
+
+  if(ok){
+    leads.push(lead);
+    updateDashboard();
+    renderTable();
+    showToast(t.toastOkTitle,`${lead.clientPrenom} ${lead.clientNom} · ${lead.produit}`,'success');
+    resetForm(false);
+  }else{
+    showToast(t.toastConnErr,t.toastConnMsg,'error');
+  }
+}
+
+/* ══════════════════════════
+   RESET
+══════════════════════════ */
+function resetForm(notify=true){
+  ['clientNom','clientPrenom','clientNum','clientPhone','agentId','agentNom','leadNotes']
+    .forEach(id=>document.getElementById(id).value='');
+  document.getElementById('leadDegree').value='';
+  document.getElementById('productType').value='';
+  const t=T[currentLang];
+  document.getElementById('productSpecific').innerHTML=`<option value="">${t.specDefault}</option>`;
+  document.getElementById('productSpecific').disabled=true;
+  customProductValue="";
+  if(notify) showToast(t.toastReset,t.toastResetMsg,'success');
+}
+
+/* ══════════════════════════
+   DASHBOARD
+══════════════════════════ */
+function updateDashboard(){
+  const total=leads.length;
+  const hot  =leads.filter(l=>l.degre==='Hot').length;
+  const warm =leads.filter(l=>l.degre==='Warm').length;
+  const inet =leads.filter(l=>l.typeProduit==='Internet').length;
+  const mob  =leads.filter(l=>l.typeProduit==='Mobile').length;
+  anim('countTotal',total);anim('countHot',hot);anim('countWarm',warm);
+  anim('countInternet',inet);anim('countMobile',mob);
+  document.getElementById('tableBadge').textContent=total+' lead'+(total!==1?'s':'');
+}
+function anim(id,target){
+  const el=document.getElementById(id);
+  let v=parseInt(el.textContent)||0;
+  if(v===target) return;
+  const iv=setInterval(()=>{
+    v+=v<target?1:-1; el.textContent=v;
+    if(v===target) clearInterval(iv);
+  },40);
+}
+
+/* ══════════════════════════
+   TABLE (with search & filter)
+══════════════════════════ */
+function getFiltered(){
+  const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  const fd=document.getElementById('filterDegree').value;
+  const ft=document.getElementById('filterType').value;
+  return leads.filter((l,i)=>{
+    const text=[l.clientNom,l.clientPrenom,l.clientNum,l.clientPhone,
+      l.typeProduit,l.produit,l.agentId,l.agentNom,l.notes].join(' ').toLowerCase();
+    return (!q||text.includes(q))&&(!fd||l.degre===fd)&&(!ft||l.typeProduit===ft);
+  });
+}
+
+function renderTable(){
+  const container=document.getElementById('tableContainer');
+  const t=T[currentLang];
+  const cls={Hot:'hot',Warm:'warm',Cold:'cold'};
+  const ico={Hot:'🔥',Warm:'🌡️',Cold:'❄️'};
+  const filtered=getFiltered();
+
+  if(!filtered.length){
+    const emptyMsg=leads.length&&(document.getElementById('searchInput').value||
+      document.getElementById('filterDegree').value||
+      document.getElementById('filterType').value)
+      ? t.noResults : t.emptyMsg;
+    container.innerHTML=`<div class="empty-state"><div class="big">${leads.length?'🔍':'📭'}</div><span>${emptyMsg}</span></div>`;
+    return;
+  }
+
+  // Build rows (reversed so newest first), keeping original index for delete
+  const rows=[...filtered].reverse().map(l=>{
+    const realIdx=leads.indexOf(l);
+    const deg=l.degre||'Cold';
+    return `<tr>
+      <td>${l.date}</td>
+      <td><strong>${l.clientPrenom} ${l.clientNom}</strong></td>
+      <td style="color:var(--muted);font-size:.75rem">${l.clientPhone!=='—'?l.clientPhone:''}</td>
+      <td>${l.typeProduit}</td>
+      <td>${l.produit}</td>
+      <td><span class="degree-badge ${cls[deg]||'cold'}">${ico[deg]||''} ${deg}</span></td>
+      <td style="font-size:.78rem">${l.agentId}<br><span style="color:var(--muted)">${l.agentNom}</span></td>
+      <td class="notes-cell" title="${l.notes!=='—'?l.notes:''}">${l.notes!=='—'?l.notes:''}</td>
+      <td>
+        <div class="action-btns">
+          <button class="icon-btn del" onclick="askDelete(${realIdx})" title="Supprimer">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  container.innerHTML=`
+    <table>
+      <thead><tr>
+        <th>${t.thDate}</th><th>${t.thClient}</th><th>${t.thPhone}</th>
+        <th>${t.thType}</th><th>${t.thProduct}</th><th>${t.thDeg}</th>
+        <th>${t.thAgent}</th><th>${t.thNotes}</th><th>${t.thActions}</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+/* ══════════════════════════
+   DELETE
+══════════════════════════ */
+function askDelete(idx){
+  deleteTargetIndex=idx;
+  document.getElementById('confirmOverlay').classList.add('active');
+}
+function closeConfirm(){
+  document.getElementById('confirmOverlay').classList.remove('active');
+  deleteTargetIndex=null;
+}
+function doDelete(){
+  if(deleteTargetIndex===null) return;
+  leads.splice(deleteTargetIndex,1);
+  closeConfirm();
+  updateDashboard();
+  renderTable();
+  const t=T[currentLang];
+  showToast(t.toastDeleted,t.toastDeletedMsg,'success');
+}
+document.getElementById('confirmOverlay').addEventListener('click',function(e){
+  if(e.target===this) closeConfirm();
+});
+
+/* ══════════════════════════
+   EXPORT CSV
+══════════════════════════ */
+function exportCSV(){
+  const t=T[currentLang];
+  if(!leads.length){ showToast('⚠️','No leads to export.','error'); return; }
+  const headers=["Date","Last Name","First Name","Customer Number","Phone",
+    "Product Type","Product","Lead Degree","Agent ID","Agent Name","Notes"];
+  const rows=leads.map(l=>[
+    l.date,l.clientNom,l.clientPrenom,l.clientNum,l.clientPhone,
+    l.typeProduit,l.produit,l.degre,l.agentId,l.agentNom,
+    (l.notes||'').replace(/,/g,';')
+  ].map(v=>`"${v}"`).join(','));
+  const csv=[headers.join(','),...rows].join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`swisscom_leads_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(t.toastExport,t.toastExportMsg,'success');
+}
+
+/* ══════════════════════════
+   INIT
+══════════════════════════ */
+setLang('fr');
+</script>
+</body>
+</html>
