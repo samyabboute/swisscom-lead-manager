@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Swisscom · Sales Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{
+  --blue:#0067CC;--blue2:#004FA3;--cyan:#38BDF8;
+  --glass:rgba(255,255,255,0.06);--glass2:rgba(255,255,255,0.1);
+  --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);
+  --text:#dde8f8;--muted:rgba(200,220,255,0.5);
+  --danger:#f87171;--success:#34d399;--warn:#fbbf24;
+  --radius:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;min-height:100vh;
+  background:linear-gradient(160deg,#020b1a 0%,#04112b 35%,#061a3d 65%,#040e23 100%);
+  color:var(--text);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 55% 45% at 8% 12%,rgba(0,103,204,.16) 0%,transparent 55%),
+    radial-gradient(ellipse 45% 40% at 92% 88%,rgba(0,53,128,.18) 0%,transparent 55%);}
+
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;
+  justify-content:center;background:linear-gradient(160deg,#020b1a 0%,#04112b 40%,#061a3d 100%);}
+#loginScreen::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 55% at 50% 45%,rgba(0,103,204,.2) 0%,transparent 65%);}
+.login-box{position:relative;z-index:1;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:48px 44px;
+  width:100%;max-width:400px;backdrop-filter:blur(24px);
+  box-shadow:0 24px 64px rgba(0,0,0,.6);animation:fadeUp .5s cubic-bezier(.22,1,.36,1);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.login-wordmark{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-.3px;}
+.login-wordmark span{color:var(--cyan);}
+.login-title{font-size:1rem;font-weight:600;color:rgba(255,255,255,.8);margin-bottom:4px;}
+.login-sub{font-size:.78rem;color:var(--muted);margin-bottom:28px;}
+.lf{margin-bottom:16px;}
+.lf label{display:block;font-size:.7rem;font-weight:600;color:var(--muted);
+  letter-spacing:.8px;text-transform:uppercase;margin-bottom:7px;}
+.lf input{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);
+  border-radius:9px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.92rem;
+  padding:12px 15px;outline:none;transition:border-color .2s;}
+.lf input:focus{border-color:var(--cyan);}
+.lf input::placeholder{color:rgba(255,255,255,.2);}
+.login-btn{width:100%;background:linear-gradient(135deg,#0067CC,#004FA3);
+  border:none;border-radius:9px;color:#fff;cursor:pointer;font-family:'Syne',sans-serif;
+  font-size:.95rem;font-weight:700;padding:13px;margin-top:10px;letter-spacing:.3px;
+  transition:opacity .2s,transform .15s;box-shadow:0 4px 20px rgba(0,103,204,.4);}
+.login-btn:hover{opacity:.9;transform:translateY(-1px);}
+.login-err{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.25);
+  border-radius:8px;color:#f87171;font-size:.8rem;margin-top:12px;
+  padding:10px 14px;text-align:center;display:none;}
+
+/* TOPBAR */
+#mainScreen{display:none;position:relative;z-index:1;}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:0 28px;height:58px;border-bottom:1px solid var(--border);
+  background:rgba(2,11,26,.75);backdrop-filter:blur(20px);
+  position:sticky;top:0;z-index:100;}
+.tb-brand{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:#fff;letter-spacing:-.2px;}
+.tb-brand span{color:var(--cyan);}
+.tb-sep{width:1px;height:20px;background:var(--border);}
+.tb-label{font-size:.75rem;font-weight:600;color:var(--muted);}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.tb-date{font-size:.72rem;color:var(--muted);background:var(--glass);
+  border:1px solid var(--border);border-radius:7px;padding:5px 12px;}
+.tb-btn{background:var(--glass);border:1px solid var(--border);border-radius:8px;
+  color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.75rem;
+  font-weight:600;padding:6px 14px;text-decoration:none;transition:all .18s;
+  display:inline-flex;align-items:center;gap:5px;}
+.tb-btn:hover{background:var(--glass2);border-color:var(--border2);}
+.tb-btn.danger{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.22);color:#f87171;}
+.tb-btn.danger:hover{background:rgba(248,113,113,.18);}
+
+/* LAYOUT */
+.content{max-width:1280px;margin:0 auto;padding:26px 22px 72px;}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:26px;}
+.kpi{background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px 16px;backdrop-filter:blur(16px);position:relative;overflow:hidden;
+  transition:transform .2s,border-color .2s;}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.kpi.kTotal::after{background:linear-gradient(90deg,var(--cyan),var(--blue));}
+.kpi.kHot::after{background:linear-gradient(90deg,#f87171,#ef4444);}
+.kpi.kWarm::after{background:linear-gradient(90deg,#fbbf24,#f59e0b);}
+.kpi.kCold::after{background:linear-gradient(90deg,#60a5fa,#3b82f6);}
+.kpi.kToday::after{background:linear-gradient(90deg,#34d399,#10b981);}
+.kpi:hover{transform:translateY(-2px);border-color:var(--border2);}
+.kpi-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;
+  justify-content:center;margin-bottom:12px;}
+.kpi.kTotal .kpi-ic{background:rgba(56,189,248,.12);}
+.kpi.kHot .kpi-ic{background:rgba(248,113,113,.12);}
+.kpi.kWarm .kpi-ic{background:rgba(251,191,36,.12);}
+.kpi.kCold .kpi-ic{background:rgba(96,165,250,.12);}
+.kpi.kToday .kpi-ic{background:rgba(52,211,153,.12);}
+.kpi-ic svg{width:17px;height:17px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.kpi.kTotal .kpi-ic svg{stroke:var(--cyan);}
+.kpi.kHot .kpi-ic svg{stroke:#f87171;}
+.kpi.kWarm .kpi-ic svg{stroke:#fbbf24;}
+.kpi.kCold .kpi-ic svg{stroke:#60a5fa;}
+.kpi.kToday .kpi-ic svg{stroke:#34d399;}
+.kpi-n{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;line-height:1;margin-bottom:4px;}
+.kpi.kTotal .kpi-n{color:var(--cyan);}
+.kpi.kHot .kpi-n{color:#f87171;}
+.kpi.kWarm .kpi-n{color:#fbbf24;}
+.kpi.kCold .kpi-n{color:#60a5fa;}
+.kpi.kToday .kpi-n{color:#34d399;}
+.kpi-l{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;}
+
+/* SECTION HEADER */
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.sh-title{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700;color:#fff;
+  display:flex;align-items:center;gap:8px;}
+.sh-title svg{width:15px;height:15px;stroke:var(--cyan);stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round;fill:none;}
+.sh-badge{font-size:.68rem;color:var(--muted);background:var(--glass);
+  border:1px solid var(--border);border-radius:999px;padding:2px 11px;}
+
+/* CARD */
+.card{background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px;backdrop-filter:blur(16px);}
+
+/* CHARTS */
+.charts3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:22px;}
+.chart-card{background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px;backdrop-filter:blur(16px);}
+.chart-lbl{font-size:.7rem;font-weight:600;color:var(--muted);letter-spacing:.4px;
+  text-transform:uppercase;margin-bottom:12px;}
+.chart-card canvas{max-height:190px;}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;}
+.mt{width:100%;border-collapse:collapse;font-size:.79rem;}
+.mt th{color:var(--muted);font-size:.63rem;font-weight:600;letter-spacing:.6px;
+  text-transform:uppercase;padding:0 10px 9px;border-bottom:1px solid var(--border);text-align:left;}
+.mt td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
+.mt tr:last-child td{border-bottom:none;}
+.mt tbody tr:hover td{background:rgba(255,255,255,.03);}
+.rank{font-family:'Syne',sans-serif;font-size:.68rem;font-weight:800;color:var(--muted);width:18px;}
+
+/* BADGE */
+.bdg{display:inline-flex;align-items:center;gap:4px;border-radius:999px;
+  font-size:.67rem;font-weight:600;padding:2px 9px;letter-spacing:.2px;}
+.bdg svg{width:10px;height:10px;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+.bdg.hot{background:rgba(248,113,113,.14);color:#f87171;border:1px solid rgba(248,113,113,.22);}
+.bdg.hot svg{stroke:#f87171;}
+.bdg.warm{background:rgba(251,191,36,.14);color:#fbbf24;border:1px solid rgba(251,191,36,.22);}
+.bdg.warm svg{stroke:#fbbf24;}
+.bdg.cold{background:rgba(96,165,250,.14);color:#60a5fa;border:1px solid rgba(96,165,250,.22);}
+.bdg.cold svg{stroke:#60a5fa;}
+.bdg.ok{background:rgba(52,211,153,.14);color:#34d399;border:1px solid rgba(52,211,153,.22);}
+.bdg.ok svg{stroke:#34d399;}
+
+/* LEADS TABLE */
+.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.toolbar input,.toolbar select{background:rgba(255,255,255,.07);border:1.5px solid var(--border);
+  border-radius:8px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.8rem;
+  padding:7px 12px;outline:none;transition:border-color .2s;}
+.toolbar input{flex:1;min-width:150px;}
+.toolbar input::placeholder{color:var(--muted);}
+.toolbar input:focus,.toolbar select:focus{border-color:var(--cyan);}
+.toolbar select option{background:#04112b;}
+.btn-dl{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#166534,#15803d);
+  border:none;border-radius:8px;color:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;
+  font-size:.76rem;font-weight:600;padding:7px 14px;transition:opacity .2s;white-space:nowrap;}
+.btn-dl:hover{opacity:.84;}
+.btn-dl svg{width:13px;height:13px;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+.btn-del{display:inline-flex;align-items:center;gap:6px;background:rgba(248,113,113,.1);
+  border:1px solid rgba(248,113,113,.22);border-radius:8px;color:#f87171;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:600;padding:7px 14px;
+  transition:all .2s;white-space:nowrap;}
+.btn-del:hover{background:rgba(248,113,113,.2);}
+.btn-del svg{width:13px;height:13px;stroke:#f87171;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+.tbl-wrap{overflow-x:auto;}
+table.lt{width:100%;border-collapse:collapse;font-size:.78rem;}
+table.lt th{color:var(--muted);font-size:.62rem;font-weight:600;letter-spacing:.6px;
+  text-transform:uppercase;padding:9px 11px;border-bottom:1px solid var(--border);
+  text-align:left;white-space:nowrap;cursor:pointer;user-select:none;}
+table.lt th:hover{color:var(--text);}
+table.lt td{padding:10px 11px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
+table.lt tr:last-child td{border-bottom:none;}
+table.lt tbody tr:hover td{background:rgba(255,255,255,.03);}
+table.lt td input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:var(--success);}
+.empty{padding:48px;text-align:center;color:var(--muted);font-size:.86rem;}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.65);
+  display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.overlay.open{display:flex;}
+.mbox{background:#04112b;border:1px solid var(--border2);border-radius:16px;
+  padding:30px 26px;max-width:350px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.7);}
+.mbox h3{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:#fff;margin-bottom:8px;}
+.mbox p{font-size:.8rem;color:var(--muted);margin-bottom:22px;line-height:1.55;}
+.mactions{display:flex;gap:8px;justify-content:flex-end;}
+.btn-cancel{background:var(--glass);border:1px solid var(--border);border-radius:8px;
+  color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.8rem;
+  font-weight:600;padding:8px 18px;transition:all .2s;}
+.btn-cancel:hover{background:var(--glass2);}
+.btn-ok-del{background:rgba(248,113,113,.18);border:1px solid rgba(248,113,113,.32);
+  border-radius:8px;color:#f87171;cursor:pointer;font-family:'DM Sans',sans-serif;
+  font-size:.8rem;font-weight:600;padding:8px 18px;transition:all .2s;}
+.btn-ok-del:hover{background:rgba(248,113,113,.3);}
+
+@media(max-width:1000px){.charts3{grid-template-columns:1fr 1fr;}.two-col{grid-template-columns:1fr;}}
+@media(max-width:700px){.kpi-grid{grid-template-columns:repeat(3,1fr);}.charts3{grid-template-columns:1fr;}.content{padding:14px 12px 56px;}}
+@media(max-width:480px){.kpi-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-wordmark">swisscom <span>lead manager</span></div>
+    <div class="login-title">Sales Dashboard</div>
+    <div class="login-sub">Accès réservé · Équipe commerciale</div>
+    <div class="lf"><label>Nom d'utilisateur</label>
+      <input type="text" id="lu" placeholder="sales-krk" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <div class="lf"><label>Mot de passe</label>
+      <input type="password" id="lp" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <button class="login-btn" onclick="doLogin()">Accéder au dashboard</button>
+    <div class="login-err" id="loginErr">Identifiants incorrects. Veuillez réessayer.</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="mainScreen">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div class="tb-brand">swisscom <span>lead manager</span></div>
+      <div class="tb-sep"></div>
+      <div class="tb-label">Dashboard</div>
+    </div>
+    <div class="tb-right">
+      <div class="tb-date" id="topDate"></div>
+      <a href="index.html" class="tb-btn">← Formulaire</a>
+      <button class="tb-btn danger" onclick="doLogout()">Déconnexion</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi kTotal">
+        <div class="kpi-ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
+        <div class="kpi-n" id="kT">0</div><div class="kpi-l">Total Leads</div>
+      </div>
+      <div class="kpi kHot">
+        <div class="kpi-ic"><svg viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 01-7 7 7 7 0 01-3.5-13"/></svg></div>
+        <div class="kpi-n" id="kH">0</div><div class="kpi-l">Chauds</div>
+      </div>
+      <div class="kpi kWarm">
+        <div class="kpi-ic"><svg viewBox="0 0 24 24"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg></div>
+        <div class="kpi-n" id="kW">0</div><div class="kpi-l">Tièdes</div>
+      </div>
+      <div class="kpi kCold">
+        <div class="kpi-ic"><svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+        <div class="kpi-n" id="kC">0</div><div class="kpi-l">Froids</div>
+      </div>
+      <div class="kpi kToday">
+        <div class="kpi-ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div class="kpi-n" id="kTd">0</div><div class="kpi-l">Aujourd'hui</div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="sh">
+      <div class="sh-title"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Analyses</div>
+      <div class="sh-badge" id="weekBadge"></div>
+    </div>
+    <div class="charts3">
+      <div class="chart-card"><div class="chart-lbl">Répartition par degré</div><canvas id="cDeg"></canvas></div>
+      <div class="chart-card"><div class="chart-lbl">Type de produit</div><canvas id="cType"></canvas></div>
+      <div class="chart-card"><div class="chart-lbl">Produits spécifiques</div><canvas id="cSpec"></canvas></div>
+    </div>
+
+    <!-- TOP AGENTS & PRODUCTS -->
+    <div class="sh"><div class="sh-title"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Performance</div></div>
+    <div class="two-col">
+      <div class="card">
+        <div class="chart-lbl" style="margin-bottom:12px;">Top Agents</div>
+        <table class="mt"><thead><tr><th>#</th><th>Agent</th><th>Leads</th><th>Conclus</th><th>Chauds</th></tr></thead>
+        <tbody id="agTb"></tbody></table>
+      </div>
+      <div class="card">
+        <div class="chart-lbl" style="margin-bottom:12px;">Produits les plus demandés</div>
+        <table class="mt"><thead><tr><th>#</th><th>Produit</th><th>Leads</th><th>%</th></tr></thead>
+        <tbody id="prTb"></tbody></table>
+      </div>
+    </div>
+
+    <!-- LEADS TABLE -->
+    <div class="sh" style="margin-top:4px;">
+      <div class="sh-title"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Tous les leads</div>
+      <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;">
+        <span class="sh-badge" id="lcnt">0 leads</span>
+        <button class="btn-dl" onclick="exportCSV()">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export Excel
+        </button>
+        <button class="btn-del" onclick="openDel()">
+          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          Supprimer la semaine
+        </button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="toolbar">
+        <input type="text" id="srch" placeholder="Rechercher client, agent, produit..." oninput="renderTable()"/>
+        <select id="fDeg" onchange="renderTable()"><option value="">Tous les degrés</option><option value="Hot">Chaud</option><option value="Warm">Tiède</option><option value="Cold">Froid</option></select>
+        <select id="fType" onchange="renderTable()"><option value="">Tous les types</option><option value="Internet">Internet</option><option value="Mobile">Mobile</option><option value="Other">Autre</option></select>
+        <select id="fConclu" onchange="renderTable()"><option value="">Tous statuts</option><option value="1">Conclus</option><option value="0">Non conclus</option></select>
+      </div>
+      <div class="tbl-wrap">
+        <table class="lt">
+          <thead><tr>
+            <th onclick="srt('date')">Date</th><th onclick="srt('clientNom')">Client</th>
+            <th>Téléphone</th><th onclick="srt('typeProduit')">Type</th>
+            <th onclick="srt('produit')">Produit</th><th onclick="srt('degre')">Degré</th>
+            <th onclick="srt('agentNom')">Agent / TAA</th><th>Notes</th>
+            <th style="text-align:center">Conclu</th>
+          </tr></thead>
+          <tbody id="ltTb"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="delModal">
+  <div class="mbox">
+    <h3>Supprimer les données de la semaine ?</h3>
+    <p>Tous les leads de la semaine en cours seront supprimés définitivement. Exportez le fichier Excel avant de continuer.</p>
+    <div class="mactions">
+      <button class="btn-cancel" onclick="closeDel()">Annuler</button>
+      <button class="btn-ok-del" onclick="delWeek()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// AUTH
+function doLogin(){
+  if(document.getElementById('lu').value.trim()==='sales-krk'&&document.getElementById('lp').value==='P@ssw0rd'){
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('mainScreen').style.display='block';
+    init();
+  } else {
+    const e=document.getElementById('loginErr');e.style.display='block';
+    setTimeout(()=>e.style.display='none',3000);
+  }
+}
+function doLogout(){
+  document.getElementById('mainScreen').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('lu').value='';document.getElementById('lp').value='';
+}
+
+// UTILS
+function todayKey(){return new Date().toISOString().slice(0,10);}
+function weekKey(){
+  const d=new Date(),day=d.getDay()||7,m=new Date(d);
+  m.setDate(d.getDate()-(day-1));return m.toISOString().slice(0,10);
+}
+function getAll(){try{const d=localStorage.getItem('sc_all_leads');return d?JSON.parse(d):{};}catch(e){return {};}}
+function saveAll(o){try{localStorage.setItem('sc_all_leads',JSON.stringify(o));}catch(e){}}
+function getConclu(){try{const d=localStorage.getItem('sc_conclu');return d?JSON.parse(d):{};}catch(e){return {};}}
+function saveConclu(o){try{localStorage.setItem('sc_conclu',JSON.stringify(o));}catch(e){}}
+
+function flatLeads(){
+  const all=getAll(),list=[];
+  Object.entries(all).forEach(([day,arr])=>{
+    if(Array.isArray(arr))arr.forEach((l,i)=>list.push({...l,_day:day,_uid:day+'_'+i}));
+  });
+  return list.sort((a,b)=>b._day.localeCompare(a._day));
+}
+
+// SORT
+let sf='',sa=true;
+function srt(f){sf===f?sa=!sa:(sf=f,sa=true);renderTable();}
+
+// CHARTS
+let cD,cT,cS;
+const CO={plugins:{legend:{labels:{color:'rgba(200,220,255,.6)',font:{family:'DM Sans',size:10},boxWidth:10,padding:10}}}};
+
+function buildCharts(leads){
+  const deg={Hot:0,Warm:0,Cold:0},typ={Internet:0,Mobile:0,Other:0},sp={};
+  leads.forEach(l=>{
+    if(deg[l.degre]!==undefined)deg[l.degre]++;
+    if(typ[l.typeProduit]!==undefined)typ[l.typeProduit]++;
+    if(l.produit&&l.produit!=='—')sp[l.produit]=(sp[l.produit]||0)+1;
+  });
+  if(cD)cD.destroy();
+  cD=new Chart(document.getElementById('cDeg'),{type:'doughnut',
+    data:{labels:['Chaud','Tiède','Froid'],datasets:[{data:[deg.Hot,deg.Warm,deg.Cold],
+      backgroundColor:['rgba(248,113,113,.72)','rgba(251,191,36,.72)','rgba(96,165,250,.72)'],
+      borderColor:['#f87171','#fbbf24','#60a5fa'],borderWidth:2,hoverOffset:5}]},
+    options:{...CO,cutout:'66%',responsive:true}});
+  if(cT)cT.destroy();
+  cT=new Chart(document.getElementById('cType'),{type:'bar',
+    data:{labels:['Internet','Mobile','Autre'],datasets:[{data:[typ.Internet,typ.Mobile,typ.Other],
+      backgroundColor:['rgba(0,103,204,.72)','rgba(56,189,248,.72)','rgba(99,102,241,.72)'],
+      borderRadius:5,borderSkipped:false}]},
+    options:{...CO,plugins:{legend:{display:false}},responsive:true,
+      scales:{x:{ticks:{color:'rgba(200,220,255,.45)',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'}},
+        y:{ticks:{color:'rgba(200,220,255,.45)',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'},beginAtZero:true}}}});
+  const sArr=Object.entries(sp).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  if(cS)cS.destroy();
+  cS=new Chart(document.getElementById('cSpec'),{type:'bar',
+    data:{labels:sArr.map(x=>x[0]),datasets:[{data:sArr.map(x=>x[1]),
+      backgroundColor:'rgba(52,211,153,.68)',borderRadius:5,borderSkipped:false}]},
+    options:{...CO,indexAxis:'y',plugins:{legend:{display:false}},responsive:true,
+      scales:{x:{ticks:{color:'rgba(200,220,255,.45)',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'},beginAtZero:true},
+        y:{ticks:{color:'rgba(200,220,255,.45)',font:{size:9}},grid:{color:'rgba(255,255,255,.04)'}}}}});
+}
+
+function buildKPIs(leads){
+  const t=todayKey();
+  document.getElementById('kT').textContent=leads.length;
+  document.getElementById('kH').textContent=leads.filter(l=>l.degre==='Hot').length;
+  document.getElementById('kW').textContent=leads.filter(l=>l.degre==='Warm').length;
+  document.getElementById('kC').textContent=leads.filter(l=>l.degre==='Cold').length;
+  document.getElementById('kTd').textContent=leads.filter(l=>l._day===t).length;
+}
+
+function buildAgents(leads){
+  const conclu=getConclu(),agents={};
+  leads.forEach(l=>{
+    const k=l.agentNom||l.agentId||'Inconnu';
+    if(!agents[k])agents[k]={t:0,h:0,c:0,taa:l.agentId||''};
+    agents[k].t++;if(l.degre==='Hot')agents[k].h++;if(conclu[l._uid])agents[k].c++;
+  });
+  const s=Object.entries(agents).sort((a,b)=>b[1].t-a[1].t).slice(0,8);
+  document.getElementById('agTb').innerHTML=s.length
+    ?s.map(([n,v],i)=>`<tr><td class="rank">${i+1}</td><td style="font-weight:600">${n}</td>
+      <td>${v.t}</td><td><span class="bdg ok">${v.c}</span></td>
+      <td><span class="bdg hot">${v.h}</span></td></tr>`).join('')
+    :'<tr><td colspan="5" style="color:var(--muted);padding:16px">Aucun lead</td></tr>';
+}
+
+function buildProducts(leads){
+  const p={},tot=leads.length;
+  leads.forEach(l=>{if(l.produit&&l.produit!=='—')p[l.produit]=(p[l.produit]||0)+1;});
+  const s=Object.entries(p).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  document.getElementById('prTb').innerHTML=s.length
+    ?s.map(([n,c],i)=>`<tr><td class="rank">${i+1}</td><td style="font-weight:600">${n}</td>
+      <td>${c}</td><td style="color:var(--muted)">${tot?Math.round(c/tot*100)+'%':'—'}</td></tr>`).join('')
+    :'<tr><td colspan="4" style="color:var(--muted);padding:16px">Aucun lead</td></tr>';
+}
+
+function buildWeek(){
+  const w=new Date(weekKey()),e=new Date(w);e.setDate(w.getDate()+6);
+  const f=d=>d.toLocaleDateString('fr-CH',{day:'numeric',month:'short'});
+  document.getElementById('weekBadge').textContent='Semaine '+f(w)+' – '+f(e);
+}
+
+function renderTable(){
+  let leads=flatLeads();
+  const conclu=getConclu(),q=(document.getElementById('srch').value||'').toLowerCase();
+  const fd=document.getElementById('fDeg').value,ft=document.getElementById('fType').value;
+  const fc=document.getElementById('fConclu').value;
+  leads=leads.filter(l=>{
+    const tx=JSON.stringify(l).toLowerCase(),ic=conclu[l._uid]?'1':'0';
+    return(!q||tx.includes(q))&&(!fd||l.degre===fd)&&(!ft||l.typeProduit===ft)&&(!fc||ic===fc);
+  });
+  if(sf)leads.sort((a,b)=>{const va=String(a[sf]||'').toLowerCase(),vb=String(b[sf]||'').toLowerCase();return sa?va.localeCompare(vb):vb.localeCompare(va);});
+  document.getElementById('lcnt').textContent=leads.length+' lead'+(leads.length!==1?'s':'');
+  const tb=document.getElementById('ltTb');
+  if(!leads.length){tb.innerHTML='<tr><td colspan="9"><div class="empty">Aucun lead trouvé</div></td></tr>';return;}
+  const db=d=>{
+    if(d==='Hot')return'<span class="bdg hot">Chaud</span>';
+    if(d==='Warm')return'<span class="bdg warm">Tiède</span>';
+    return'<span class="bdg cold">Froid</span>';
+  };
+  tb.innerHTML=leads.map(l=>`<tr>
+    <td style="color:var(--muted);font-size:.71rem;white-space:nowrap">${l.date||'—'}</td>
+    <td style="font-weight:600">${l.clientPrenom||''} ${l.clientNom||''}</td>
+    <td style="color:var(--muted)">${l.clientPhone||'—'}</td>
+    <td style="color:var(--muted)">${l.typeProduit||'—'}</td>
+    <td style="font-weight:500">${l.produit||'—'}</td>
+    <td>${db(l.degre)}</td>
+    <td><span style="font-weight:600">${l.agentNom||"—"}</span>${l.agentId ? '<br><span style="color:var(--muted);font-size:.7rem">'+l.agentId+'</span>' : ''}</td>
+    <td style="color:var(--muted);font-size:.73rem;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.notes||'—'}</td>
+    <td style="text-align:center"><input type="checkbox" ${conclu[l._uid]?'checked':''} onchange="togConclu('${l._uid}',this.checked)"/></td>
+  </tr>`).join('');
+}
+
+function togConclu(uid,v){
+  const c=getConclu();v?c[uid]=true:delete c[uid];saveConclu(c);buildAgents(flatLeads());
+}
+
+function openDel(){document.getElementById('delModal').classList.add('open');}
+function closeDel(){document.getElementById('delModal').classList.remove('open');}
+function delWeek(){
+  const all=getAll(),wk=new Date(weekKey());
+  Object.keys(all).forEach(day=>{if(new Date(day)>=wk)delete all[day];});
+  saveAll(all);closeDel();buildAll();
+}
+
+function exportCSV(){
+  const leads=flatLeads(),conclu=getConclu();
+  const h=['Date','Nom','Prenom','N Client','Telephone','Type Produit','Produit','Degre','TAA','Nom Agent','Notes','Conclu'];
+  const rows=leads.map(l=>[l.date||'',l.clientNom||'',l.clientPrenom||'',l.clientNum||'',
+    l.clientPhone||'',l.typeProduit||'',l.produit||'',l.degre||'',l.agentId||'',l.agentNom||'',
+    l.notes||'',conclu[l._uid]?'Oui':'Non'].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(';'));
+  const csv='\uFEFF'+[h.join(';'),...rows].join('\r\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download='swisscom_leads_'+todayKey()+'.csv';a.click();
+}
+
+function buildAll(){
+  const leads=flatLeads();
+  buildKPIs(leads);buildCharts(leads);buildAgents(leads);buildProducts(leads);
+  buildWeek();renderTable();
+}
+
+function init(){
+  document.getElementById('topDate').textContent=new Date().toLocaleDateString('fr-CH',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
+  setInterval(()=>document.getElementById('topDate').textContent=new Date().toLocaleDateString('fr-CH',{weekday:'short',day:'numeric',month:'long',year:'numeric'}),60000);
+  setInterval(buildAll,15000);
+  buildAll();
+}
+</script>
+</body>
+</html>
