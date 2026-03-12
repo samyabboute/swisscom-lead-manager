@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -182,7 +183,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:20px;
 .toast-text span  {font-size:.76rem;color:var(--muted);}
 
 /* ── MODAL ── */
-.modal-overlay{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.65);
+.modal-overlay{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.65);
   backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;
   opacity:0;pointer-events:none;transition:opacity .25s;}
 .modal-overlay.active{opacity:1;pointer-events:all;}
@@ -784,7 +785,7 @@ function setLang(l){
   pt.innerHTML = `<option value="">${t.typeDefault}</option>
     <option value="Internet">🌐 Internet</option>
     <option value="Mobile">📱 Mobile</option>
-    <option value="${l==='fr'?'Other':'Other'}">${t.otherLabel}</option>`;
+    <option value="Other">${t.otherLabel}</option>`;
   pt.value = ptv;
 
   // specific product placeholder if disabled
@@ -839,10 +840,12 @@ function handleProductType(){
   const type = document.getElementById('productType').value;
   const specific = document.getElementById('productSpecific');
   const t = T[currentLang];
-  if(type==='Other'){
+  if(type==='Other'||type==='Autre'){
     specific.innerHTML=`<option value="">${t.specDefault}</option>`;
     specific.disabled=true;
-    openModal(); return;
+    // Show modal with slight delay to ensure DOM is ready
+    setTimeout(()=>openModal(), 50);
+    return;
   }
   customProductValue="";
   if(!type||!PRODUCTS[type]){
@@ -978,7 +981,7 @@ async function submitLead(e){
   try{
     await fetch(POWER_AUTOMATE_URL,{
       method:'POST',mode:'no-cors',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'text/plain'},
       body:JSON.stringify(lead)
     });
     ok=true;
