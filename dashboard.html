@@ -363,23 +363,72 @@ function doLogout(){
   document.getElementById('lu').value='';document.getElementById('lp').value='';
 }
 
+/* ══ SUPABASE CONFIG ══ */
+const SUPA_URL = "https://nkovarvxecmwyicnusxz.supabase.co";
+const SUPA_KEY = "sb_publishable_6GupXDR_7KTyTLZdck8LRw_GKlsnJAK";
+
 // UTILS
 function todayKey(){return new Date().toISOString().slice(0,10);}
 function weekKey(){
   const d=new Date(),day=d.getDay()||7,m=new Date(d);
   m.setDate(d.getDate()-(day-1));return m.toISOString().slice(0,10);
 }
-function getAll(){try{const d=localStorage.getItem('sc_all_leads');return d?JSON.parse(d):{};}catch(e){return {};}}
-function saveAll(o){try{localStorage.setItem('sc_all_leads',JSON.stringify(o));}catch(e){}}
-function getConclu(){try{const d=localStorage.getItem('sc_conclu');return d?JSON.parse(d):{};}catch(e){return {};}}
-function saveConclu(o){try{localStorage.setItem('sc_conclu',JSON.stringify(o));}catch(e){}}
 
-function flatLeads(){
-  const all=getAll(),list=[];
-  Object.entries(all).forEach(([day,arr])=>{
-    if(Array.isArray(arr))arr.forEach((l,i)=>list.push({...l,_day:day,_uid:day+'_'+i}));
+let _allLeads = [];
+
+async function fetchAllLeads(){
+  const res = await fetch(`${SUPA_URL}/rest/v1/leads?order=created_at.desc&limit=2000`, {
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
   });
-  return list.sort((a,b)=>b._day.localeCompare(a._day));
+  if(!res.ok) return [];
+  const data = await res.json();
+  _allLeads = data.map(r => ({
+    id: r.id,
+    date: r.date,
+    clientNom: r.client_nom,
+    clientPrenom: r.client_prenom,
+    clientNum: r.client_num,
+    clientPhone: r.client_phone,
+    typeProduit: r.type_produit,
+    produit: r.produit,
+    degre: r.degre,
+    agentId: r.agent_taa,
+    agentNom: r.agent_nom,
+    notes: r.notes,
+    conclu: r.conclu,
+    _day: r.date ? r.date.slice(6,10)+'-'+r.date.slice(3,5)+'-'+r.date.slice(0,2) : '',
+    _uid: r.id
+  }));
+  return _allLeads;
+}
+
+function flatLeads(){ return _allLeads; }
+
+async function supaToggleConclu(id, val){
+  await fetch(`${SUPA_URL}/rest/v1/leads?id=eq.${id}`, {
+    method: 'PATCH',
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ conclu: val })
+  });
+}
+
+async function supaDeleteWeek(){
+  const wk = weekKey(); // YYYY-MM-DD
+  // Convert to dd/mm/yyyy prefix pattern for matching
+  const wkDate = new Date(wk);
+  const endDate = new Date(wk); endDate.setDate(endDate.getDate()+6);
+  // Delete all leads whose created_at is within the current week
+  await fetch(`${SUPA_URL}/rest/v1/leads?created_at=gte.${wk}T00:00:00`, {
+    method: 'DELETE',
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY
+    }
+  });
 }
 
 // SORT
@@ -431,11 +480,11 @@ function buildKPIs(leads){
 }
 
 function buildAgents(leads){
-  const conclu=getConclu(),agents={};
+  const agents={};
   leads.forEach(l=>{
     const k=l.agentNom||l.agentId||'Inconnu';
     if(!agents[k])agents[k]={t:0,h:0,c:0,taa:l.agentId||''};
-    agents[k].t++;if(l.degre==='Hot')agents[k].h++;if(conclu[l._uid])agents[k].c++;
+    agents[k].t++;if(l.degre==='Hot')agents[k].h++;if(l.conclu)agents[k].c++;
   });
   const s=Object.entries(agents).sort((a,b)=>b[1].t-a[1].t).slice(0,8);
   document.getElementById('agTb').innerHTML=s.length
@@ -463,11 +512,11 @@ function buildWeek(){
 
 function renderTable(){
   let leads=flatLeads();
-  const conclu=getConclu(),q=(document.getElementById('srch').value||'').toLowerCase();
+  const q=(document.getElementById('srch').value||'').toLowerCase();
   const fd=document.getElementById('fDeg').value,ft=document.getElementById('fType').value;
   const fc=document.getElementById('fConclu').value;
   leads=leads.filter(l=>{
-    const tx=JSON.stringify(l).toLowerCase(),ic=conclu[l._uid]?'1':'0';
+    const tx=JSON.stringify(l).toLowerCase(),ic=l.conclu?'1':'0';
     return(!q||tx.includes(q))&&(!fd||l.degre===fd)&&(!ft||l.typeProduit===ft)&&(!fc||ic===fc);
   });
   if(sf)leads.sort((a,b)=>{const va=String(a[sf]||'').toLowerCase(),vb=String(b[sf]||'').toLowerCase();return sa?va.localeCompare(vb):vb.localeCompare(va);});
@@ -488,28 +537,34 @@ function renderTable(){
     <td>${db(l.degre)}</td>
     <td><span style="font-weight:600">${l.agentNom||"—"}</span>${l.agentId ? '<br><span style="color:var(--muted);font-size:.7rem">'+l.agentId+'</span>' : ''}</td>
     <td style="color:var(--muted);font-size:.73rem;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.notes||'—'}</td>
-    <td style="text-align:center"><input type="checkbox" ${conclu[l._uid]?'checked':''} onchange="togConclu('${l._uid}',this.checked)"/></td>
+    <td style="text-align:center"><input type="checkbox" ${l.conclu?'checked':''} onchange="togConclu('${l._uid}',this.checked)"/></td>
   </tr>`).join('');
 }
 
-function togConclu(uid,v){
-  const c=getConclu();v?c[uid]=true:delete c[uid];saveConclu(c);buildAgents(flatLeads());
+async function togConclu(uid,v){
+  // Update in Supabase
+  await supaToggleConclu(uid, v);
+  // Update local cache
+  const lead = _allLeads.find(l=>l._uid===uid);
+  if(lead) lead.conclu = v;
+  buildAgents(flatLeads());
 }
 
 function openDel(){document.getElementById('delModal').classList.add('open');}
 function closeDel(){document.getElementById('delModal').classList.remove('open');}
-function delWeek(){
-  const all=getAll(),wk=new Date(weekKey());
-  Object.keys(all).forEach(day=>{if(new Date(day)>=wk)delete all[day];});
-  saveAll(all);closeDel();buildAll();
+async function delWeek(){
+  await supaDeleteWeek();
+  closeDel();
+  await fetchAllLeads();
+  buildAll();
 }
 
 function exportCSV(){
-  const leads=flatLeads(),conclu=getConclu();
+  const leads=flatLeads();
   const h=['Date','Nom','Prenom','N Client','Telephone','Type Produit','Produit','Degre','TAA','Nom Agent','Notes','Conclu'];
   const rows=leads.map(l=>[l.date||'',l.clientNom||'',l.clientPrenom||'',l.clientNum||'',
     l.clientPhone||'',l.typeProduit||'',l.produit||'',l.degre||'',l.agentId||'',l.agentNom||'',
-    l.notes||'',conclu[l._uid]?'Oui':'Non'].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(';'));
+    l.notes||'',l.conclu?'Oui':'Non'].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(';'));
   const csv='\uFEFF'+[h.join(';'),...rows].join('\r\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
@@ -522,11 +577,14 @@ function buildAll(){
   buildWeek();renderTable();
 }
 
-function init(){
+async function init(){
   document.getElementById('topDate').textContent=new Date().toLocaleDateString('fr-CH',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
   setInterval(()=>document.getElementById('topDate').textContent=new Date().toLocaleDateString('fr-CH',{weekday:'short',day:'numeric',month:'long',year:'numeric'}),60000);
-  setInterval(buildAll,15000);
+  // Load from Supabase
+  await fetchAllLeads();
   buildAll();
+  // Auto-refresh every 15 seconds
+  setInterval(async()=>{ await fetchAllLeads(); buildAll(); }, 15000);
 }
 </script>
 </body>

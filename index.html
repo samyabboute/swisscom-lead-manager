@@ -643,7 +643,76 @@ footer strong{color:rgba(255,255,255,.52);}
 // POWER AUTOMATE — Paste your HTTP trigger URL below
 // See 'ℹ️ How to Use' sheet in the Excel file for setup instructions
 // ══════════════════════════════════════════════
-const POWER_AUTOMATE_URL = "https://default1edaad83b2ef483d81f12c48682f40.ec.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ce3a63d3f4d8445394cd0f5f2836fd3e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=y6KTAU2O0lRd6esUrWsrfu8tBPUTNEmMMZwZ-Hj-bnM";
+/* ══ SUPABASE CONFIG ══ */
+const SUPA_URL = "https://nkovarvxecmwyicnusxz.supabase.co";
+const SUPA_KEY = "sb_publishable_6GupXDR_7KTyTLZdck8LRw_GKlsnJAK";
+
+async function supaInsert(lead){
+  const res = await fetch(`${SUPA_URL}/rest/v1/leads`, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify({
+      date: lead.date,
+      client_nom: lead.clientNom,
+      client_prenom: lead.clientPrenom,
+      client_num: lead.clientNum,
+      client_phone: lead.clientPhone,
+      type_produit: lead.typeProduit,
+      produit: lead.produit,
+      degre: lead.degre,
+      agent_taa: lead.agentId,
+      agent_nom: lead.agentNom,
+      notes: lead.notes,
+      conclu: false
+    })
+  });
+  if(!res.ok) throw new Error(await res.text());
+  const data = await res.json();
+  return data[0];
+}
+
+async function supaDelete(id){
+  const res = await fetch(`${SUPA_URL}/rest/v1/leads?id=eq.${id}`, {
+    method: 'DELETE',
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY
+    }
+  });
+  if(!res.ok) throw new Error(await res.text());
+}
+
+async function supaLoadToday(){
+  const today = new Date().toLocaleDateString('en-GB');
+  const res = await fetch(`${SUPA_URL}/rest/v1/leads?date=like.${encodeURIComponent(today+'%')}&order=created_at.asc`, {
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY
+    }
+  });
+  if(!res.ok) return [];
+  const data = await res.json();
+  return data.map(r => ({
+    id: r.id,
+    date: r.date,
+    clientNom: r.client_nom,
+    clientPrenom: r.client_prenom,
+    clientNum: r.client_num,
+    clientPhone: r.client_phone,
+    typeProduit: r.type_produit,
+    produit: r.produit,
+    degre: r.degre,
+    agentId: r.agent_taa,
+    agentNom: r.agent_nom,
+    notes: r.notes,
+    conclu: r.conclu
+  }));
+}
 
 /* ══════════════════════════
    PRODUCTS (English values → stored as-is in Excel)
@@ -819,18 +888,16 @@ const T = {
    STATE
 ══════════════════════════ */
 let leads = [];
-
-function todayKey(){return new Date().toISOString().slice(0,10);}
-function getAllLeads(){try{const d=localStorage.getItem('sc_all_leads');return d?JSON.parse(d):{};}catch(e){return {};}}
-function saveLeads(){try{const s=getAllLeads();s[todayKey()]=leads;localStorage.setItem('sc_all_leads',JSON.stringify(s));}catch(e){}}
-function loadLeads(){try{const s=getAllLeads();leads=s[todayKey()]||[];}catch(e){leads=[];}}
-loadLeads();
 let currentLang = 'fr';
 let customProductValue = "";
 let deleteTargetIndex = null;
 
 // init on load
-window.addEventListener('DOMContentLoaded',()=>{ updateDashboard(); renderTable(); });
+window.addEventListener('DOMContentLoaded', async ()=>{
+  leads = await supaLoadToday();
+  updateDashboard();
+  renderTable();
+});
 
 /* ══════════════════════════
    DATE
@@ -1097,27 +1164,19 @@ async function submitLead(e){
   };
 
   btn.classList.add('loading');
-  let ok=false;
   try{
-    await fetch(POWER_AUTOMATE_URL,{
-      method:'POST',mode:'no-cors',
-      headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify(lead)
-    });
-    ok=true;
-  }catch(err){console.warn('Sheets error:',err);}
-  btn.classList.remove('loading');
-
-  if(ok){
+    const saved = await supaInsert(lead);
+    lead.id = saved.id;
     leads.push(lead);
-    saveLeads();
     updateDashboard();
     renderTable();
     showToast(t.toastOkTitle,`${lead.clientPrenom} ${lead.clientNom} · ${lead.produit}`,'success');
     resetForm(false);
-  }else{
-    showToast(t.toastConnErr,t.toastConnMsg,'error');
+  }catch(err){
+    console.error('Supabase error:',err);
+    showToast(t.toastConnErr, t.toastConnMsg,'error');
   }
+  btn.classList.remove('loading');
 }
 
 /* ══════════════════════════
@@ -1244,15 +1303,21 @@ function closeConfirm(){
   document.getElementById('confirmOverlay').classList.remove('active');
   deleteTargetIndex=null;
 }
-function doDelete(){
+async function doDelete(){
   if(deleteTargetIndex===null) return;
-  leads.splice(deleteTargetIndex,1);
-  saveLeads();
-  closeConfirm();
-  updateDashboard();
+  const lead = leads[deleteTargetIndex];
+  try{
+    if(lead.id) await supaDelete(lead.id);
+    leads.splice(deleteTargetIndex,1);
+    closeConfirm();
+    updateDashboard();
     renderTable();
-  const t=T[currentLang];
-  showToast(t.toastDeleted,t.toastDeletedMsg,'success');
+    const t=T[currentLang];
+    showToast(t.toastDeleted,t.toastDeletedMsg,'success');
+  }catch(err){
+    console.error('Delete error:',err);
+    closeConfirm();
+  }
 }
 document.getElementById('confirmOverlay').addEventListener('click',function(e){
   if(e.target===this) closeConfirm();
